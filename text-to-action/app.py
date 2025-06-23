@@ -10,9 +10,10 @@ import re
 import time
 import threading
 import requests
+import sys
 from ollama import chat, ChatResponse
 
-__VERSION__ = "1.0.0"
+__VERSION__ = "0.0.2"
 print(f"""
 Welcome to TextToAction v{__VERSION__}!
 
@@ -72,6 +73,21 @@ def generate_code(prompt):
         print(f"Ollama package error: {error}")
         return ''
 
+def spinner_animation(stop_event, message="Reviewing your request..."):
+    spinner = ['|', '/', '-', '\\']
+    idx = 0
+    # sys.stdout.write(message + ' ')
+    sys.stdout.flush()
+    while not stop_event.is_set():
+        sys.stdout.write(spinner[idx % len(spinner)])
+        sys.stdout.flush()
+        time.sleep(0.1)
+        sys.stdout.write('\b')
+        idx += 1
+    sys.stdout.write('\b' + ' ' * len(spinner[idx % len(spinner)]) + '\b')  # Clear spinner
+    sys.stdout.write('\n')
+    sys.stdout.flush()
+
 def find_task(user_input):
     """Prepare prompt from user instructions"""
     prompt = (
@@ -83,7 +99,15 @@ def find_task(user_input):
         "Do not use hardcoded or made-up values. Make sure to return only the python code without any additional text or explanation."
     )
 
-    generated_code = generate_code(prompt)
+    # Animation spinner setup
+    stop_event = threading.Event()
+    spinner_thread = threading.Thread(target=spinner_animation, args=(stop_event,))
+    spinner_thread.start()
+    try:
+        generated_code = generate_code(prompt)
+    finally:
+        stop_event.set()
+        spinner_thread.join()
     return generated_code
 
 def safe_import(name, globals=None, locals=None, fromlist=(), level=0):
@@ -134,9 +158,7 @@ def perform_task(instructions):
             code = find_task(instructions)
         except Exception as error:
             print(f"{type(error).__name__} was raised: {error}")
-        print("\nGenerated code to be executed in sandbox:\n" + "-"*40)
-        print(code)
-        print("-"*40)
+
         try:
             compiled_code = compile(code, "<string>", "exec")
             exec(compiled_code, sandbox_globals)
@@ -149,25 +171,11 @@ def perform_task(instructions):
             else:
                 print("Maximum retries reached. Task failed.")
 
-#
-# We need to accept user's input and get it execute by preparing the required code. For example:
-#
-# 1.   print hello world
-# 2.   subscribe to 'mqtt/python' topic on 'broker.hivemq.com' and keep waiting for message to come. Once message arrived print it.
-# 3.   publish a 'hello world' message to 'mqtt/python' topic on 'broker.hivemq.com'
-#
-
 while True:
     try:
         user_input = input("\nWhat would you like to do?\n> ")
         if user_input == 'bye':
             break
-
-        # TODO:
-        # At this time assumption is user is giving a specific input of executing a task
-        # with dynamic programming approach. Going forward, first we want to know what is
-        # query (seeking info, request for task execution, etc.) and
-        # based on that we want to perform tasks.
 
         perform_task(user_input)
 

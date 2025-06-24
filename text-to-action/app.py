@@ -28,10 +28,10 @@ Type your request in plain English and TextToAction will generate and execute th
 Example tasks:
   1. print hello world
   2. what's the time?
-  3. publish a 'hello world' message to 'mqtt/python' topic on 'broker.hivemq.com'
+  3. what's the day today?
   4. save text to a file
   5. list files in the current directory
-  6. play a .wav file (if supported)
+  6. print hello world for 10 times with a delay of 2 seconds
 
 Type 'bye' to quit.
 """)
@@ -66,7 +66,8 @@ def generate_code(prompt):
                     'role': 'user',
                     'content': prompt,
                 },
-            ]
+            ],
+            keep_alive='30m'
         )
         return extract_code_blocks(response.message.content.strip())
     except Exception as error:
@@ -186,14 +187,32 @@ def perform_task(instructions):
             else:
                 print("Maximum retries reached. Task failed.")
 
+# Model warm-up in background
+model_ready_event = threading.Event()
+
+def model_warmup():
+    try:
+        _ = chat(
+            model=OLLAMA_MODEL,
+            messages=[{'role': 'user', 'content': 'Say hello.'}]
+        )
+    except Exception as error:
+        print(f"Model warm-up failed: {error}")
+    finally:
+        model_ready_event.set()
+
+warmup_thread = threading.Thread(target=model_warmup)
+warmup_thread.start()
+
 while True:
     try:
         user_input = input("\nWhat would you like to do?\n> ")
         if user_input == 'bye':
             break
-
+        if not model_ready_event.is_set():
+            print("Waiting for AI model to finish loading...")
+            model_ready_event.wait()
         perform_task(user_input)
-
     except KeyboardInterrupt:
         pass
     except Exception as error:

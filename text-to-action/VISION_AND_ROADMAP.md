@@ -7,7 +7,7 @@ Empower users to interact with their digital environment using natural language,
 - **Natural Language First:** Users describe what they want; the system figures out how to do it.
 - **Dynamic & Extensible:** Support for new actions, services, and integrations can be added easily.
 - **Personalized Experience:** Remember user preferences, context, and history for smarter, tailored responses.
-- **Safety & Security:** All actions are performed in a secure, permissioned, and auditable way.
+- **Safety & Security:** All actions are performed in a secure, permission, and auditable way.
 - **Transparency:** Users can see what actions are being taken and why.
 
 ## Roadmap
@@ -19,8 +19,9 @@ Empower users to interact with their digital environment using natural language,
 - [x] Animation/spinner for user feedback
 
 ### Phase 2: Enhanced Capabilities
+- [x] Add testing support
+- [x] Integrate with popular APIs (e.g., weather, news, music streaming)
 - [ ] Add support for more local actions (e.g., image, audio, video processing)
-- [ ] Integrate with popular APIs (e.g., weather, news, music streaming)
 - [ ] Allow dynamic tool selection (local vs. remote resources)
 - [ ] Improve error handling and user feedback
 - [ ] Add logging and basic analytics

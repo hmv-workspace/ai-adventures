@@ -111,7 +111,22 @@ def find_task(user_input):
     return generated_code
 
 def safe_import(name, globals=None, locals=None, fromlist=(), level=0):
-    allowed = {'datetime', 'time', 'threading', 'requests'}
+    allowed = {
+        'datetime', 
+        'time', 
+        'threading', 
+        'requests', 
+        'os', 
+        'webbrowser', 
+        'input', 
+        'subprocess', 
+        'json', 
+        're', 
+        'math', 
+        'random', 
+        'sys', 
+        'pathlib'
+    }
     if name in allowed:
         return __import__(name, globals, locals, fromlist, level)
     raise ImportError(f"Import of '{name}' is not allowed in sandbox.")

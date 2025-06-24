@@ -3,11 +3,13 @@
 ## Vision
 Empower users to interact with their digital environment using natural language, enabling dynamic, personalized, and intelligent automation of tasks that traditionally require manual UI navigation. The system should seamlessly bridge local and remote resources, integrate with external services, and adapt to user preferences, making technology more accessible and efficient for everyone.
 
+https://github.com/user-attachments/assets/e8d0ab44-3e72-49c0-9818-42ce1a94a9d5
+
 ## Guiding Principles
-- **Natural Language First:** Users describe what they want; the system figures out how to do it.
+- **Natural Language First:** Users describe what they want; the system determines how to do it.
 - **Dynamic & Extensible:** Support for new actions, services, and integrations can be added easily.
 - **Personalized Experience:** Remember user preferences, context, and history for smarter, tailored responses.
-- **Safety & Security:** All actions are performed in a secure, permission, and auditable way.
+- **Safety & Security:** All actions are performed in a secure, permissioned, and auditable way.
 - **Transparency:** Users can see what actions are being taken and why.
 
 ## Roadmap
